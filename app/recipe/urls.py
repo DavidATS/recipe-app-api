@@ -1,0 +1,12 @@
+from django.urls import include
+from django.urls import path
+from recipe import views
+from rest_framework.routers import DefaultRouter  # Registers ulrs for actions
+
+
+router = DefaultRouter()
+router.register("tags", views.TagViewSet)
+
+app_name = "recipe"
+
+urlpatterns = [path("", include(router.urls))]
