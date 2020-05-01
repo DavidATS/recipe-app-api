@@ -1,5 +1,5 @@
-from user.serilizers import UserSerializer
 from rest_framework import generics
+from user.serilizers import UserSerializer
 
 
 class CreateUserView(generics.CreateAPIView):
