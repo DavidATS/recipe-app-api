@@ -6,6 +6,18 @@ from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import JSONRenderer
+
+
+class EmberJSONRenderer(JSONRenderer):
+    def render(self, data, accepted_media_type=None, renderer_context=None):
+        data = {
+            "status_code": renderer_context.get("response"),
+            "results": data,
+        }
+        return super(EmberJSONRenderer, self).render(
+            data, accepted_media_type, renderer_context
+        )
 
 
 class BaseView(
@@ -30,6 +42,7 @@ class TagViewSet(BaseView):
 class IngredientViewSet(BaseView):
     """Manage ingredients in the database"""
 
+    renderer_classes = (EmberJSONRenderer,)
     queryset = Ingredient.objects.all()
     serializer_class = serializers.IngredientSerializer
 
@@ -39,6 +52,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+    renderer_classes = (EmberJSONRenderer,)
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user).order_by("-id")
